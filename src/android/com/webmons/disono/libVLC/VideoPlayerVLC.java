@@ -68,6 +68,12 @@ public class VideoPlayerVLC extends CordovaPlugin {
                             _cordovaSendResult("getPosition", data);
 
                             break;
+                            
+                        case "close":
+                            _filters("close");
+                             Log.d(TAG, "close execute: ");
+
+                            break;
                     }
                 }
             }
@@ -121,6 +127,12 @@ public class VideoPlayerVLC extends CordovaPlugin {
                 _seekPosition(object.getLong("position"));
 
                 return true;
+
+            case "close":
+                _filters("close");
+                Log.d(TAG, "close execute: ");
+                return true;
+                
         }
 
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
