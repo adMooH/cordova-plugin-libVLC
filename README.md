@@ -1,17 +1,19 @@
 # cordova-plugin-libVLC
 Cordova Plugin using libVLC
 
+Added 'close' function.
+
 Tutorial to compile from source:
 [https://wiki.videolan.org/LibVLC](https://wiki.videolan.org/LibVLC)
 
 # Install
 Latest stable version from npm:
 ```sh
-$ cordova plugin add cordova-plugin-libvlc
+$ cordova plugin add https://github.com/marcelinojung/cordova-plugin-libVLC.git
 ```
 Bleeding edge version from Github:
 ```sh
-$ cordova plugin add https://github.com/disono/cordova-plugin-libVLC
+$ cordova plugin add https://github.com/marcelinojung/cordova-plugin-libVLC
 ```
 
 # Using the plugin
