@@ -125,6 +125,10 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
                             }
 
                             break;
+                            
+                        case "close":
+                            onClose(); 
+                            break;
                     }
                 }
             }
@@ -189,6 +193,12 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
 
         vlcVideoLibrary.stop();
         _sendBroadCast("onDestroyVlc");
+    }
+    
+    public void onClose() {
+        Log.d(TAG, "onClose");
+        finish(); 
+        _sendBroadCast("onCloseVlc");
     }
 
     @Override
