@@ -33,6 +33,7 @@ libVLCPlayer.stop([success], [failed]);
 libVLCPlayer.pause([success], [failed]);
 libVLCPlayer.playNext('path-to-next-video', [options], [success], [failed]);
 libVLCPlayer.stop([success], [failed]);
+libVLCPlayer.close([success], [failed]);
 
 // returns: {position, current_location (00:00), duration (00:00)}
 libVLCPlayer.getPosition([success], [failed]);
