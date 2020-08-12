@@ -100,4 +100,20 @@ libVLCPlayer.seekPosition = function(position, success, failure) {
     );
 };
 
+libVLCPlayer.close = function(success, failure) {
+    success = (success) ? success : function () {};
+    failure = (failure) ? failure : function () {};
+
+    // fire
+    exec(
+        success,
+        failure,
+        'VideoPlayerVLC',
+        'close',
+        []
+    );
+};
+
+
+
 module.exports = libVLCPlayer;
