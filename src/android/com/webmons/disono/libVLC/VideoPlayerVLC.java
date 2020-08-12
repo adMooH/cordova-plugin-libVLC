@@ -69,8 +69,8 @@ public class VideoPlayerVLC extends CordovaPlugin {
 
                             break;
                             
-                        case "close":
-                            _filters("close");
+                        case "onCloseVlc":
+                            _filters("onCloseVlc");
                              Log.d(TAG, "close execute: ");
 
                             break;
