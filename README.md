@@ -1,19 +1,17 @@
 # cordova-plugin-libVLC
 Cordova Plugin using libVLC
 
-Added 'close' function.
-
 Tutorial to compile from source:
 [https://wiki.videolan.org/LibVLC](https://wiki.videolan.org/LibVLC)
 
 # Install
 Latest stable version from npm:
 ```sh
-$ cordova plugin add https://github.com/marcelinojung/cordova-plugin-libVLC.git
+$ cordova plugin add https://github.com/admooh/cordova-plugin-libVLC.git
 ```
 Bleeding edge version from Github:
 ```sh
-$ cordova plugin add https://github.com/marcelinojung/cordova-plugin-libVLC
+$ cordova plugin add https://github.com/admooh/cordova-plugin-libVLC
 ```
 
 # Using the plugin
@@ -23,7 +21,7 @@ $ cordova plugin add https://github.com/marcelinojung/cordova-plugin-libVLC
 	data: null
 }
 // events names: onPlayVlc, onPauseVlc, onStopVlc, onVideoEnd, onDestroyVlc, onError, getPosition
-// options: {autoPlay: true, hideControls: false}
+// options: {autoPlay: true, hideControls: false, fullscreen: true,top: 0, left: number: 0 ,height: 0} 
 libVLCPlayer.play('path-to-video', [options], [success], [failed]);
 libVLCPlayer.stop([success], [failed]);
 ```
@@ -34,6 +32,10 @@ libVLCPlayer.pause([success], [failed]);
 libVLCPlayer.playNext('path-to-next-video', [options], [success], [failed]);
 libVLCPlayer.stop([success], [failed]);
 libVLCPlayer.close([success], [failed]);
+
+//change VLC Player Position and Size on the screen
+// options: { fullscreen: true, top: 0, left: number: 0, height: 0}
+libVLCPlayer.changePositionAndSize(options,[success], [failed]);
 
 // returns: {position, current_location (00:00), duration (00:00)}
 libVLCPlayer.getPosition([success], [failed]);
