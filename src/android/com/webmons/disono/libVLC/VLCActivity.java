@@ -18,8 +18,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.graphics.Color;
+import android.widget.Toast;
+import android.view.ViewGroup;
 
 import com.webmons.disono.vlc.VlcListener;
 import com.webmons.disono.vlc.VlcVideoLibrary;
@@ -44,6 +48,7 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
     public final String TAG = "VLCActivity";
 
     SurfaceView surfaceView;
+    RelativeLayout mediaPlayerContainer;
     LinearLayout mediaPlayerView;
     LinearLayout mediaPlayerControls;
     SeekBar mSeekBar;
@@ -62,6 +67,12 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
 
     private String _url;
 
+
+    private boolean _isFullscreen = true;
+    private int _top = 0;
+    private int _left = 0;
+    private int _width = 0;
+    private int _height = 0;
     private boolean _autoPlay = false;
     private boolean _hideControls = false;
 
@@ -84,6 +95,10 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
 
                             _initPlayer();
 
+                            break;
+                        case "changePositionAndSize":
+                                getAndSetPositionAndSizeProps(intent);
+                                setCustomPositionAndSize();
                             break;
                         case "pause":
                             if (vlcVideoLibrary.isPlaying()) {
@@ -120,14 +135,14 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
                         case "seekPosition":
                             Log.d(TAG, "Seek: " + intent.getFloatExtra("position", 0));
                             if (vlcVideoLibrary.isPlaying()) {
-                                isSeeking = true;
-                                _changePosition(intent.getFloatExtra("position", 0));
-                            }
+							isSeeking = true;
+							_changePosition(intent.getFloatExtra("position", 0));
+						}
 
                             break;
-                            
+
                         case "close":
-                            onClose(); 
+                            onClose();
                             break;
                     }
                 }
@@ -150,6 +165,10 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
             actionBar.hide();
         }
 
+        getWindow().setBackgroundDrawable(new 	android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+
+        Utils.convertActivityToTranslucent(this);
+
         setContentView(_getResource("vlc_player", "layout"));
         _UIListener();
         _broadcastRCV();
@@ -160,6 +179,9 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
         _hideControls = intent.getBooleanExtra("hideControls", false);
         // auto play the video after launching
         _autoPlay = intent.getBooleanExtra("autoPlay", false);
+
+        getAndSetPositionAndSizeProps(intent);
+        setCustomPositionAndSize();
 
         _handlerSeekBar();
         _handlerMediaControl();
@@ -194,10 +216,10 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
         vlcVideoLibrary.stop();
         _sendBroadCast("onDestroyVlc");
     }
-    
+
     public void onClose() {
         Log.d(TAG, "onClose");
-        finish(); 
+        finish();
         _sendBroadCast("onCloseVlc");
     }
 
@@ -254,6 +276,48 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
         bStartStop.setImageDrawable(drawableIcon);
     }
 
+    private void getAndSetPositionAndSizeProps(Intent intent) {
+        _isFullscreen = intent.getBooleanExtra("fullscreen", true);
+        _top = intent.getIntExtra("top", 0);
+        _left = intent.getIntExtra("left", 0);
+        _width = intent.getIntExtra("width", 320);
+        _height = intent.getIntExtra("height", 240);
+    }
+
+    private void setCustomPositionAndSize() {
+        if (!_isFullscreen) {
+            setCustomPosition();
+            setCustomSize();
+        } else {
+            setCustomPositionAndSizeToFullscreen();
+        }
+        _sendBroadCast("onPositionAndSizeChanged");
+    }
+
+    private void setCustomPositionAndSizeToFullscreen() {
+        setMargins(mediaPlayerContainer,0,0,0,0);
+        mediaPlayerContainer.getLayoutParams().height =  ViewGroup.LayoutParams.MATCH_PARENT;
+        mediaPlayerContainer.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+    }
+
+    private void setCustomSize() {
+        mediaPlayerContainer.getLayoutParams().height = _height;
+        mediaPlayerContainer.getLayoutParams().width = _width;
+        vlcVideoLibrary.setSize(_width,_height);
+    }
+
+    private void setCustomPosition() {
+        setMargins(mediaPlayerContainer,_left,_top,0,0);
+    }
+
+    private void setMargins (View view, int left, int top, int right, int bottom) {
+        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            p.setMargins(left, top, right, bottom);
+            view.requestLayout();
+        }
+    }
+
     private void _initPlayer() {
         new Timer().schedule(
                 new TimerTask() {
@@ -296,6 +360,8 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
 
         videoCurrentLoc = findViewById(_getResource("videoCurrentLoc", "id"));
         videoDuration = findViewById(_getResource("videoDuration", "id"));
+
+        mediaPlayerContainer = findViewById(_getResource("mediaPlayerContainer", "id"));
 
         mediaPlayerView = findViewById(_getResource("mediaPlayerView", "id"));
         mediaPlayerControls = findViewById(_getResource("mediaPlayerControls", "id"));

@@ -1,119 +1,106 @@
-var exec = require('cordova/exec');
-var libVLCPlayer = {};
+cordova.define('cordova-plugin-libvlc.VideoPlayerVLC', function(require, exports, module) {
+	var exec = require('cordova/exec');
+	var libVLCPlayer = {};
 
-libVLCPlayer.play = function(uri, options, success, failure) {
-    options = (options) ? options : {
-        autoPlay: false,
-        hideControls: false
-    };
+	libVLCPlayer.play = function(uri, options, success, failure) {
+		options = options
+			? options
+			: {
+					autoPlay: false,
+					hideControls: false,
+					fullscreen: true,
+					height: 0,
+					left: 0,
+					top: 0,
+					width: 0
+			  };
 
-    // fire
-    exec(
-        success,
-        failure,
-        'VideoPlayerVLC',
-        'play',
-        [uri, options]
-    );
-};
+		// fire
+		exec(success, failure, 'VideoPlayerVLC', 'play', [uri, options]);
+	};
 
-libVLCPlayer.playNext = function(uri, options, success, failure) {
-    options = (options) ? options : {
-        autoPlay: false,
-        hideControls: false
-    };
+	libVLCPlayer.changePositionAndSize = function(options, success, failure) {
+		success = success ? success : function() {};
+		failure = failure ? failure : function() {};
+		options = options
+			? options
+			: {
+					fullscreen: true,
+					height: 0,
+					left: 0,
+					top: 0,
+					width: 0,
+			  };
 
-    // fire
-    exec(
-        success,
-        failure,
-        'VideoPlayerVLC',
-        'playNext',
-        [uri, options]
-    );
-};
+		// fire
+		exec(success, failure, 'VideoPlayerVLC', 'changePositionAndSize', [options]);
+	};
 
-libVLCPlayer.pause = function(success, failure) {
-    success = (success) ? success : function () {};
-    failure = (failure) ? failure : function () {};
+	libVLCPlayer.playNext = function(uri, options, success, failure) {
+		options = options
+			? options
+			: {
+					autoPlay: false,
+					hideControls: false,
+			  };
 
-    // fire
-    exec(
-        success,
-        failure,
-        'VideoPlayerVLC',
-        'pause',
-        []
-    );
-};
+		// fire
+		exec(success, failure, 'VideoPlayerVLC', 'playNext', [uri, options]);
+	};
 
-libVLCPlayer.stop = function(success, failure) {
-    success = (success) ? success : function () {};
-    failure = (failure) ? failure : function () {};
+	libVLCPlayer.pause = function(success, failure) {
+		success = success ? success : function() {};
+		failure = failure ? failure : function() {};
 
-    // fire
-    exec(
-        success,
-        failure,
-        'VideoPlayerVLC',
-        'stop',
-        []
-    );
-};
+		// fire
+		exec(success, failure, 'VideoPlayerVLC', 'pause', []);
+	};
 
-libVLCPlayer.getPosition = function(success, failure) {
-    success = (success) ? success : function () {};
-    failure = (failure) ? failure : function () {};
+	libVLCPlayer.stop = function(success, failure) {
+		success = success ? success : function() {};
+		failure = failure ? failure : function() {};
 
-    // fire
-    exec(
-        success,
-        failure,
-        'VideoPlayerVLC',
-        'getPosition',
-        []
-    );
-};
+		// fire
+		exec(success, failure, 'VideoPlayerVLC', 'stop', []);
+	};
 
-libVLCPlayer.seekPosition = function(position, success, failure) {
-    if (isNaN(position)) {
-        failure('You position to seek is not a number.');
-        return;
-    }
+	libVLCPlayer.getPosition = function(success, failure) {
+		success = success ? success : function() {};
+		failure = failure ? failure : function() {};
 
-    if (position < 0 || position > 100) {
-        failure('You position must be between 1 and 100 only.');
-        return;
-    }
+		// fire
+		exec(success, failure, 'VideoPlayerVLC', 'getPosition', []);
+	};
 
-    // position = parseFloat(parseFloat(position) / 100);
-    success = (success) ? success : function () {};
-    failure = (failure) ? failure : function () {};
+	libVLCPlayer.seekPosition = function(position, success, failure) {
+		if (isNaN(position)) {
+			failure('You position to seek is not a number.');
+			return;
+		}
 
-    // fire
-    exec(
-        success,
-        failure,
-        'VideoPlayerVLC',
-        'seekPosition',
-        [position, {position: position}]
-    );
-};
+		if (position < 0 || position > 100) {
+			failure('You position must be between 1 and 100 only.');
+			return;
+		}
 
-libVLCPlayer.close = function(success, failure) {
-    success = (success) ? success : function () {};
-    failure = (failure) ? failure : function () {};
+		// position = parseFloat(parseFloat(position) / 100);
+		success = success ? success : function() {};
+		failure = failure ? failure : function() {};
 
-    // fire
-    exec(
-        success,
-        failure,
-        'VideoPlayerVLC',
-        'close',
-        []
-    );
-};
+		// fire
+		exec(success, failure, 'VideoPlayerVLC', 'seekPosition', [
+			position,
+			{ position: position },
+		]);
+	};
 
+	libVLCPlayer.close = function(success, failure) {
+		success = success ? success : function() {};
+		failure = failure ? failure : function() {};
 
+		// fire
+		exec(success, failure, 'VideoPlayerVLC', 'close', []);
+	};
 
-module.exports = libVLCPlayer;
+	module.exports = libVLCPlayer;
+});

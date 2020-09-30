@@ -58,6 +58,9 @@ public class VideoPlayerVLC extends CordovaPlugin {
                         case "onDestroyVlc":
                             _cordovaSendResult("onDestroyVlc", data);
 
+                        case "onPositionAndSizeChanged":
+                            _cordovaSendResult("onPositionAndSizeChanged", data);
+
                             break;
                         case "onError":
                             _cordovaSendResult("onError", data);
@@ -71,7 +74,7 @@ public class VideoPlayerVLC extends CordovaPlugin {
                             
                         case "onCloseVlc":
                             _filters("onCloseVlc");
-                             Log.d(TAG, "close execute: ");
+                            Log.d(TAG, "close execute: ");
 
                             break;
                     }
@@ -101,13 +104,20 @@ public class VideoPlayerVLC extends CordovaPlugin {
             case "play":
                 url = args.getString(0);
                 object = args.getJSONObject(1);
-                _play(url, object.getBoolean("autoPlay"), object.getBoolean("hideControls"));
+
+                _play(url, object.getBoolean("autoPlay"), object.getBoolean("hideControls"), object.getBoolean("fullscreen"), object.getInt("top"), object.getInt("left"), object.getInt("width"), object.getInt("height"));
 
                 return true;
             case "playNext":
                 url = args.getString(0);
                 object = args.getJSONObject(1);
+
                 _playNext(url, object.getBoolean("autoPlay"), object.getBoolean("hideControls"));
+
+                return true;
+            case "changePositionAndSize":
+                object = args.getJSONObject(0);
+                _changePositionAndSize(object.getBoolean("fullscreen"), object.getInt("top"), object.getInt("left"), object.getInt("width"), object.getInt("height"));
 
                 return true;
             case "pause":
@@ -160,13 +170,18 @@ public class VideoPlayerVLC extends CordovaPlugin {
         _filters("stop");
     }
 
-    private void _play(String uri, boolean autoPlay, boolean hideControls) {
+    private void _play(String uri, boolean autoPlay, boolean hideControls, boolean isFullscreen, int top, int left, int width, int height) {
         _broadcastRCV();
 
         Intent intent = new Intent(activity, VLCActivity.class);
         intent.putExtra("url", uri);
         intent.putExtra("autoPlay", autoPlay);
         intent.putExtra("hideControls", hideControls);
+        intent.putExtra("fullscreen", isFullscreen);
+        intent.putExtra("top", top);
+        intent.putExtra("left", left);
+        intent.putExtra("width", width);
+        intent.putExtra("height", height);
         cordova.startActivityForResult(this, intent, 1000);
     }
 
@@ -178,6 +193,7 @@ public class VideoPlayerVLC extends CordovaPlugin {
         intent.putExtra("url", uri);
         intent.putExtra("autoPlay", autoPlay);
         intent.putExtra("hideControls", hideControls);
+
         activity.sendBroadcast(intent);
     }
 
@@ -186,6 +202,18 @@ public class VideoPlayerVLC extends CordovaPlugin {
         intent.setAction(BROADCAST_METHODS);
         intent.putExtra("method", "seekPosition");
         intent.putExtra("position", position);
+        activity.sendBroadcast(intent);
+    }
+
+    private void _changePositionAndSize(boolean isFullscreen, int top, int left, int width, int height) {
+        Intent intent = new Intent();
+        intent.setAction(BROADCAST_METHODS);
+        intent.putExtra("method", "changePositionAndSize");
+        intent.putExtra("fullscreen", isFullscreen);
+        intent.putExtra("top", top);
+        intent.putExtra("left", left);
+        intent.putExtra("width", width);
+        intent.putExtra("height", height);
         activity.sendBroadcast(intent);
     }
 
