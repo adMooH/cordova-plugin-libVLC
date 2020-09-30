@@ -3,6 +3,6 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.duartepatriani.libVLC-Player:libvlc:1.0'
-    compile 'com.github.duartepatriani.libVLC-Player:disonoVLC:1.0'
+    compile 'com.github.duartepatriani.libVLC-Player:libvlc:1.2'
+    compile 'com.github.duartepatriani.libVLC-Player:disonoVLC:1.2'
 }
