@@ -21,7 +21,7 @@
 	  "vlclan",
     "vlc-player-cordova"
   ],
-  "types": "./www/libVLCPlayer.d.ts"
+  "types": "./www/libVLCPlayer.d.ts".
   "engines": [
     {
       "name": "cordova",
