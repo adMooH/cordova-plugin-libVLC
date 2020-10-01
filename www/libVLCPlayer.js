@@ -1,4 +1,3 @@
-cordova.define('cordova-plugin-libvlc.VideoPlayerVLC', function(require, exports, module) {
 	var exec = require('cordova/exec');
 	var libVLCPlayer = {};
 
@@ -103,4 +102,3 @@ cordova.define('cordova-plugin-libvlc.VideoPlayerVLC', function(require, exports
 	};
 
 	module.exports = libVLCPlayer;
-});
