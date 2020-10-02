@@ -20,7 +20,7 @@ $ cordova plugin add https://github.com/admooh/cordova-plugin-libVLC
 	event_name: '',
 	data: null
 }
-// events names: onPlayVlc, onPauseVlc, onStopVlc, onVideoEnd, onDestroyVlc, onError, getPosition
+// events names: onPlayVlc, onPauseVlc, onStopVlc, onVideoEnd, onDestroyVlc, onError, getPosition, onPositionAndSizeChanged
 // options: {autoPlay: true, hideControls: false, fullscreen: true,top: 0, left: number: 0 ,height: 0} 
 // path-to-video: rtsp://170.93.143.139/rtplive/470011e600ef003a004ee33696235daa
 libVLCPlayer.play('path-to-video', [options], [success], [failed]);
