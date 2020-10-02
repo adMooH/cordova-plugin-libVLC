@@ -6,12 +6,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
@@ -22,7 +23,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.graphics.Color;
-import android.widget.Toast;
 import android.view.ViewGroup;
 
 import com.webmons.disono.vlc.VlcListener;
@@ -101,9 +101,7 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
                                 setCustomPositionAndSize();
                             break;
                         case "pause":
-                            if (vlcVideoLibrary.isPlaying()) {
-                                vlcVideoLibrary.pause();
-                            }
+							pause();
 
                             break;
                         case "resume":
@@ -113,9 +111,7 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
 
                             break;
                         case "stop":
-                            if (vlcVideoLibrary.isPlaying()) {
-                                vlcVideoLibrary.stop();
-                            }
+                            stop();
 
                             break;
                         case "getPosition":
@@ -157,7 +153,6 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         activity = this;
         ActionBar actionBar = activity.getActionBar();
@@ -194,18 +189,16 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
     public void onPause() {
         super.onPause();
 
-        if (vlcVideoLibrary.isPlaying()) {
-            vlcVideoLibrary.pause();
-        }
+        pause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if (vlcVideoLibrary.isPlaying()) {
-            vlcVideoLibrary.getPlayer().play();
-        }
+            if (vlcVideoLibrary.isPlaying()) {
+                vlcVideoLibrary.getPlayer().play();
+            }
     }
 
     @Override
@@ -213,7 +206,7 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
         super.onDestroy();
         activity.unregisterReceiver(br);
 
-        vlcVideoLibrary.stop();
+        stop();
         _sendBroadCast("onDestroyVlc");
     }
 
@@ -228,7 +221,7 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
         if (!vlcVideoLibrary.isPlaying()) {
             vlcVideoLibrary.play(_url);
         } else {
-            vlcVideoLibrary.pause();
+            pause();
         }
     }
 
@@ -268,13 +261,33 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
     public void onError() {
         _sendBroadCast("onError");
 
-        if (vlcVideoLibrary != null) {
-            vlcVideoLibrary.stop();
-        }
+        stop();
 
         Drawable drawableIcon = getResources().getDrawable(_getResource("ic_play_arrow_white_24dp", "drawable"));
         bStartStop.setImageDrawable(drawableIcon);
     }
+
+	private void pause() {
+		try {
+			if (vlcVideoLibrary.isPlaying()) {
+				vlcVideoLibrary.pause();
+			}
+		} catch (Exception error) {
+			Log.e(TAG, "pause", error);
+			_sendBroadCast("onError");
+		}
+	}
+
+	private void stop() {
+		try {
+			if (vlcVideoLibrary.isPlaying()) {
+				vlcVideoLibrary.stop();
+			}
+		} catch (Exception error) {
+			Log.e(TAG, "stop", error);
+			_sendBroadCast("onError");
+		}
+	}
 
     private void getAndSetPositionAndSizeProps(Intent intent) {
         _isFullscreen = intent.getBooleanExtra("fullscreen", true);
@@ -295,10 +308,24 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
     }
 
     private void setCustomPositionAndSizeToFullscreen() {
-        setMargins(mediaPlayerContainer,0,0,0,0);
-        mediaPlayerContainer.getLayoutParams().height =  ViewGroup.LayoutParams.MATCH_PARENT;
-        mediaPlayerContainer.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+		setMediaPlayerContainerToFullscreen();
+		setVlcToFullscreen();
     }
+
+    private void setMediaPlayerContainerToFullscreen() {
+		setMargins(mediaPlayerContainer,0,0,0,0);
+		mediaPlayerContainer.getLayoutParams().height =  ViewGroup.LayoutParams.MATCH_PARENT;
+		mediaPlayerContainer.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+	}
+
+    private void setVlcToFullscreen() {
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int screenWidth = size.x;
+		int screenHeight = size.y;
+		vlcVideoLibrary.setSize(screenWidth,screenHeight);
+	}
 
     private void setCustomSize() {
         mediaPlayerContainer.getLayoutParams().height = _height;
@@ -335,9 +362,7 @@ public class VLCActivity extends Activity implements VlcListener, View.OnClickLi
                         }
 
                         if (_autoPlay && vlcVideoLibrary != null && _url != null) {
-                            if (vlcVideoLibrary.isPlaying()) {
-                                vlcVideoLibrary.stop();
-                            }
+                            stop();
 
                             vlcVideoLibrary.play(_url);
                         }
