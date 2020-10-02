@@ -2,7 +2,7 @@ interface IlibVLCPlayer {
 	play(
 		url: string,
 		options?: IlibVLCPlayerOptions,
-		success?: () => void,
+		success?: (event: IlibVLCPlayerEvent) => void,
 		failed?: () => void,
 	): void;
 	playNext(
@@ -29,6 +29,11 @@ interface IlibVLCPlayer {
 		success?: () => void,
 		failed?: () => void,
 	);
+}
+
+interface IlibVLCPlayerEvent {
+	event_name: string;
+	data: any;
 }
 
 interface IlibVLCPlayerBaseOptions {
